@@ -1,0 +1,6 @@
+flask
+twilio
+PyMuPDF
+sentence-transformers
+faiss-cpu
+openai
