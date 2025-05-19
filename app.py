@@ -6,9 +6,10 @@ from twilio.twiml.messaging_response import MessagingResponse
 from sentence_transformers import SentenceTransformer
 import faiss
 import numpy as np
+from openai import OpenAI
 
 # === Config ===
-openai.api_key = os.environ.get("OPENAI_API_KEY")
+openai.api_key = "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"
 EMBED_MODEL = "all-MiniLM-L6-v2"
 
 # === Load PDF and Chunk Text ===
@@ -36,7 +37,8 @@ class VectorStore:
         D, I = self.index.search(q_emb, top_k)
         return [self.chunks[i] for i in I[0]]
 
-# === Query LLM ===
+client = OpenAI(api_key=openai.api_key)  # Replace with your actual key
+
 def query_gpt(context_chunks, question):
     context = "\n\n".join(context_chunks)
     prompt = f"""
@@ -47,16 +49,18 @@ Context:
 
 Question: {question}
 Answer:
-"""
-    response = openai.ChatCompletion.create(
-        model="gpt-4",
-        messages=[{"role": "user", "content": prompt}]
+    """.strip()
+
+    response = client.chat.completions.create(
+        model="gpt-4",  # or "gpt-3.5-turbo"
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.7,
     )
     return response.choices[0].message.content.strip()
 
 # === Flask App ===
 app = Flask(__name__)
-chunks = extract_text_chunks("book.pdf")
+chunks = extract_text_chunks("pdfcoffee.com_technical-analysis-masterclasspdf-3-pdf-free.pdf")
 store = VectorStore(chunks)
 
 @app.route("/whatsapp", methods=["POST"])
