@@ -6,4 +6,5 @@ services:
     startCommand: python app.py
     envVars:
       - key: OPENAI_API_KEY
+        port: 10000
         sync: false
