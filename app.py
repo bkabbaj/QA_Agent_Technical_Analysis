@@ -9,7 +9,7 @@ import numpy as np
 from openai import OpenAI
 
 # === Config ===
-openai.api_key = "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"
+openai.api_key = os.environ.get("OPENAI_API_KEY")
 EMBED_MODEL = "all-MiniLM-L6-v2"
 
 # === Load PDF and Chunk Text ===
@@ -60,7 +60,7 @@ Answer:
 
 # === Flask App ===
 app = Flask(__name__)
-chunks = extract_text_chunks("pdfcoffee.com_technical-analysis-masterclasspdf-3-pdf-free.pdf")
+chunks = extract_text_chunks("book.pdf")
 store = VectorStore(chunks)
 
 @app.route("/whatsapp", methods=["POST"])
